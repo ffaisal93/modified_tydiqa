@@ -66,7 +66,7 @@ import preproc
 import tf_io
 import tydi_modeling
 
-import tensorflow.contrib as tf_contrib
+# import tensorflow.contrib as tf_contrib
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -136,7 +136,7 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_predict", False, "Whether to run prediction.")
 
-flags.DEFINE_integer("train_batch_size", 16, "Total batch size for training.")
+flags.DEFINE_integer("train_batch_size", 4, "Total batch size for training.")
 
 flags.DEFINE_integer("predict_batch_size", 8,
                      "Total batch size for predictions.")
@@ -148,7 +148,7 @@ flags.DEFINE_integer(
 
 flags.DEFINE_float("learning_rate", 5e-5, "The initial learning rate for Adam.")
 
-flags.DEFINE_float("num_train_epochs", 3.0,
+flags.DEFINE_float("num_train_epochs", 2.0,
                    "Total number of training epochs to perform.")
 
 flags.DEFINE_float(
@@ -266,13 +266,13 @@ def main(_):
     tpu_cluster_resolver = tf_contrib.cluster_resolver.TPUClusterResolver(
         FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
 
-  is_per_host = tf_contrib.tpu.InputPipelineConfig.PER_HOST_V2
-  run_config = tf_contrib.tpu.RunConfig(
+  is_per_host = tf.estimator.tpu.InputPipelineConfig.PER_HOST_V2
+  run_config = tf.estimator.tpu.RunConfig(
       cluster=tpu_cluster_resolver,
       master=FLAGS.master,
       model_dir=FLAGS.output_dir,
       save_checkpoints_steps=FLAGS.save_checkpoints_steps,
-      tpu_config=tf_contrib.tpu.TPUConfig(
+      tpu_config=tf.estimator.tpu.TPUConfig(
           iterations_per_loop=FLAGS.iterations_per_loop,
           per_host_input_for_training=is_per_host))
 
@@ -301,7 +301,7 @@ def main(_):
       use_one_hot_embeddings=FLAGS.use_tpu)
 
   # If TPU is not available, this falls back to normal Estimator on CPU or GPU.
-  estimator = tf_contrib.tpu.TPUEstimator(
+  estimator = tf.estimator.tpu.TPUEstimator(
       use_tpu=FLAGS.use_tpu,
       model_fn=model_fn,
       config=run_config,
