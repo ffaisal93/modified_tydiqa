@@ -25,29 +25,43 @@ from bert import optimization as bert_optimization
 import tensorflow.compat.v1 as tf
 import data
 
-import tensorflow.contrib as tf_contrib
-
+# import tensorflow.contrib as tf_contrib
+import numpy as np
 
 def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
                  use_one_hot_embeddings):
   """Creates a classification model."""
-  model = bert_modeling.BertModel(
-      config=bert_config,
-      is_training=is_training,
-      input_ids=input_ids,
-      input_mask=input_mask,
-      token_type_ids=segment_ids,
-      use_one_hot_embeddings=use_one_hot_embeddings)
+#   model = bert_modeling.BertModel(
+#       config=bert_config,
+#       is_training=is_training,
+#       input_ids=input_ids,
+#       input_mask=input_mask,
+#       token_type_ids=segment_ids,
+#       use_one_hot_embeddings=use_one_hot_embeddings)
 
   # Get the logits for the start and end predictions.
-  final_hidden = model.get_sequence_output()
+  from transformers import  TFBertModel, BertConfig
+  config = BertConfig.from_pretrained("bert-base-multilingual-cased")
+  model = TFBertModel.from_pretrained('bert-base-multilingual-cased', config= config)
+  model = model(input_ids=input_ids,
+      attention_mask=input_mask,
+      token_type_ids=segment_ids)
+      
+#   final_hidden = model.get_sequence_output()
+  final_hidden = model.last_hidden_state
 
   final_hidden_shape = bert_modeling.get_shape_list(
       final_hidden, expected_rank=3)
   batch_size = final_hidden_shape[0]
   seq_length = final_hidden_shape[1]
   hidden_size = final_hidden_shape[2]
+  
 
+  
+#   logging.info("final hidden:", final_hidden)
+#   logging.info("model_h.last_hidden_state:", model_h.last_hidden_state)
+  
+  
   output_weights = tf.get_variable(
       "cls/tydi/output_weights", [2, hidden_size],
       initializer=tf.truncated_normal_initializer(stddev=0.02))
@@ -68,8 +82,12 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
   (start_logits, end_logits) = (unstacked_logits[0], unstacked_logits[1])
 
   # Get the logits for the answer type prediction.
-  answer_type_output_layer = model.get_pooled_output()
-  answer_type_hidden_size = answer_type_output_layer.shape[-1].value
+#   answer_type_output_layer = model.get_pooled_output()
+  answer_type_output_layer = model.pooler_output
+#   logging.info("answer type:",answer_type_output_layer.shape[-1])
+#   logging.info("model_h.answer type:", model_h.pooler_output)
+  
+  answer_type_hidden_size = answer_type_output_layer.shape[-1]
 
   num_answer_types = 5  # YES, NO, UNKNOWN, PASSAGE, MINIMAL
   answer_type_output_weights = tf.get_variable(
@@ -178,7 +196,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                                                     num_train_steps,
                                                     num_warmup_steps, use_tpu)
 
-      output_spec = tf_contrib.tpu.TPUEstimatorSpec(
+      output_spec = tf.estimator.tpu.TPUEstimatorSpec(
           mode=mode,
           loss=total_loss,
           train_op=train_op,
@@ -190,7 +208,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
           "end_logits": end_logits,
           "answer_type_logits": answer_type_logits,
       }
-      output_spec = tf_contrib.tpu.TPUEstimatorSpec(
+      output_spec = tf.estimator.tpu.TPUEstimatorSpec(
           mode=mode, predictions=predictions, scaffold_fn=scaffold_fn)
     else:
       raise ValueError("Only TRAIN and PREDICT modes are supported: %s" %
