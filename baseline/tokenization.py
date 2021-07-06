@@ -38,6 +38,49 @@ SubToken = collections.namedtuple(
         "is_good"
     ])
 
+special_tokens_bert = [
+        "[CLS]", "[SEP]", "[PAD]", "[YES]", "[NO]", "[NoLongAnswer]",
+        "[NoShortAnswer]", "[SA]", "[/SA]", "[UNK]", "[CLS]", "[SEP]", "[MASK]",
+    '[ContextId=44]', '[ContextId=34]', '[ContextId=-1]', '[Q]', '[Paragraph=7]', 
+    '[Paragraph=1]', '[Paragraph=28]', '[ContextId=9]', '[ContextId=41]', '[ContextId=4]', 
+    '[ContextId=25]', '[ContextId=15]', '[ContextId=40]', '[Paragraph=32]', '[ContextId=13]', 
+    '[Paragraph=33]', '[Paragraph=41]', '[NoShortAnswer]', '[ContextId=6]', '[Paragraph=35]', 
+    '[ContextId=17]', '[Paragraph=8]', '[/SA]', '[Paragraph=20]', '[Paragraph=45]', '[Paragraph=25]', 
+    '[NO]', '[ContextId=3]', '[Paragraph=13]', '[NoLongAnswer]', '[Paragraph=30]', '[Paragraph=9]', 
+    '[Paragraph=2]', '[Paragraph=19]', '[ContextId=29]', '[Paragraph=3]', '[ContextId=45]', '[Paragraph=42]', 
+    '[ContextId=12]', '[Paragraph=29]', '[ContextId=19]', '[ContextId=11]', '[Paragraph=44]', '[ContextId=2]', 
+    '[Paragraph=14]', '[ContextId=27]', '[ContextId=31]', '[Paragraph=36]', '[Paragraph=15]', '[Paragraph=24]',
+    '[Paragraph=21]', '[ContextId=18]', '[Paragraph=4]', '[Paragraph=31]', '[ContextId=1]', '[Paragraph=10]', 
+    '[ContextId=5]', '[ContextId=33]', '[ContextId=0]', '[Paragraph=11]', '[Paragraph=34]', '[ContextId=23]', 
+    '[Paragraph=6]', '[Paragraph=43]', '[ContextId=39]', '[ContextId=20]', '[ContextId=14]', '[SA]', 
+    '[ContextId=28]', '[Paragraph=39]', '[ContextId=26]', '[ContextId=16]', '[ContextId=37]', '[ContextId=35]', 
+    '[YES]', '[ContextId=24]', '[ContextId=30]', '[Paragraph=17]', '[Paragraph=5]', '[Paragraph=18]', 
+    '[Paragraph=23]', '[ContextId=22]', '[ContextId=10]', '[Paragraph=37]', '[Paragraph=12]', '[ContextId=7]', 
+    '[ContextId=21]', '[Paragraph=38]', '[Paragraph=40]', '[ContextId=36]', '[ContextId=43]', '[ContextId=32]',
+    '[Paragraph=26]', '[ContextId=38]', '[Paragraph=16]', '[ContextId=8]', '[Paragraph=22]', '[ContextId=42]', 
+    '[Paragraph=27]']
+
+special_tokens_xlm = [
+        "<s>", "</s>", "<pad>", "[YES]", "[NO]", "[NoLongAnswer]",
+        "[NoShortAnswer]", "[SA]", "[/SA]", "<unk>", "<s>", "</s>", "<mask>",
+    '[ContextId=44]', '[ContextId=34]', '[ContextId=-1]', '[Q]', '[Paragraph=7]', 
+    '[Paragraph=1]', '[Paragraph=28]', '[ContextId=9]', '[ContextId=41]', '[ContextId=4]', 
+    '[ContextId=25]', '[ContextId=15]', '[ContextId=40]', '[Paragraph=32]', '[ContextId=13]', 
+    '[Paragraph=33]', '[Paragraph=41]', '[NoShortAnswer]', '[ContextId=6]', '[Paragraph=35]', 
+    '[ContextId=17]', '[Paragraph=8]', '[/SA]', '[Paragraph=20]', '[Paragraph=45]', '[Paragraph=25]', 
+    '[NO]', '[ContextId=3]', '[Paragraph=13]', '[NoLongAnswer]', '[Paragraph=30]', '[Paragraph=9]', 
+    '[Paragraph=2]', '[Paragraph=19]', '[ContextId=29]', '[Paragraph=3]', '[ContextId=45]', '[Paragraph=42]', 
+    '[ContextId=12]', '[Paragraph=29]', '[ContextId=19]', '[ContextId=11]', '[Paragraph=44]', '[ContextId=2]', 
+    '[Paragraph=14]', '[ContextId=27]', '[ContextId=31]', '[Paragraph=36]', '[Paragraph=15]', '[Paragraph=24]',
+    '[Paragraph=21]', '[ContextId=18]', '[Paragraph=4]', '[Paragraph=31]', '[ContextId=1]', '[Paragraph=10]', 
+    '[ContextId=5]', '[ContextId=33]', '[ContextId=0]', '[Paragraph=11]', '[Paragraph=34]', '[ContextId=23]', 
+    '[Paragraph=6]', '[Paragraph=43]', '[ContextId=39]', '[ContextId=20]', '[ContextId=14]', '[SA]', 
+    '[ContextId=28]', '[Paragraph=39]', '[ContextId=26]', '[ContextId=16]', '[ContextId=37]', '[ContextId=35]', 
+    '[YES]', '[ContextId=24]', '[ContextId=30]', '[Paragraph=17]', '[Paragraph=5]', '[Paragraph=18]', 
+    '[Paragraph=23]', '[ContextId=22]', '[ContextId=10]', '[Paragraph=37]', '[Paragraph=12]', '[ContextId=7]', 
+    '[ContextId=21]', '[Paragraph=38]', '[Paragraph=40]', '[ContextId=36]', '[ContextId=43]', '[ContextId=32]',
+    '[Paragraph=26]', '[ContextId=38]', '[Paragraph=16]', '[ContextId=8]', '[Paragraph=22]', '[ContextId=42]', 
+    '[Paragraph=27]']
 
 def whitespace_tokenize(subtokens):
   """An implementation of BERT's whitespace tokenizer that preserves space."""
@@ -281,13 +324,220 @@ class NonDestructiveWordpieceTokenizer(object):
     return output_tokens
 
 
+# class TyDiTokenizer(object):
+# #   """A BERT-compatible tokenizer that keeps byte indices."""
+
+#   def __init__(self, vocab_file, fail_on_mismatch=False):
+#     self.vocab = bert_tokenization.load_vocab(vocab_file)
+#     self.tokenizer = NonDestructiveFullTokenizer(vocab_file=vocab_file)
+
+#     self.fail_on_mismatch = fail_on_mismatch
+
+#   def tokenize(self, text):
+#     wordpieces, _, _, _ = self.tokenize_with_offsets(text)
+#     return wordpieces
+
+#   def tokenize_with_offsets(self, text):
+#     """Tokenize question or context with BERT tokenizer.
+
+#     Args:
+#       text: text string to be tokenized.
+
+#     Returns:
+#       tuple:
+#         wordpieces_out: List[int]
+#         start_offsets_out: List[int]
+#         end_offsets_out: List[int]
+#         offset_to_wp_out: Dict[int, int]
+#     """
+
+#   #  First, tokenize on whitespace so that we can preserve special tokens
+#   #   such as '[CLS]' and '[ContextId=0]' (`BertTokenizer` would split these
+#   #   otherwise).
+#     whitespace_tokens = text.split(" ")
+
+#     berttok_wordpieces = []  # type List[List[int]]
+#     berttok_starts = []  # type List[List[int]]
+#     berttok_limits = []  # type List[List[int]]
+
+#     mismatched_tokens = []
+#     mismatch_bytes = 0
+#     num_tokens = len(whitespace_tokens)
+
+#     unk_token = "[UNK]"
+#     unk_id = self.vocab[unk_token]
+
+#     for token in whitespace_tokens:
+#       internal_byte_offset = 0
+#       subtokens = self.tokenizer.tokenize(token)
+#       subtoken_ids = [
+#           self.vocab.get(subtoken, unk_id) for subtoken, _, _ in subtokens
+#       ]
+#       subtoken_lengths = [
+#           data.byte_len(orig_subtoken) for _, orig_subtoken, _ in subtokens
+#       ]
+
+#       actual_token_length = data.byte_len(token)
+#       actual_subtokens_length = sum(subtoken_lengths)
+
+#       if actual_token_length != actual_subtokens_length:
+#         mismatched_tokens.append(token)
+#         mismatch_bytes += abs(actual_token_length - actual_subtokens_length)
+
+#         if self.fail_on_mismatch:
+#           raise ValueError(
+#               "Mismatched token. token='{}' (len={}) subtokens='{}' (len={})"
+#               .format(
+#                   token, actual_token_length,
+#                   " ".join(orig_subtoken for _, orig_subtoken, _ in subtokens),
+#                   actual_subtokens_length))
+
+#       inside_berttok_wordpieces = []
+#       inside_berttok_starts = []
+#       inside_berttok_limits = []
+#       for subtoken_id, subtoken_len in zip(subtoken_ids, subtoken_lengths):
+#         inside_berttok_wordpieces.append(subtoken_id)
+#         inside_berttok_starts.append(internal_byte_offset)
+#         inside_berttok_limits.append(internal_byte_offset + subtoken_len)
+#         # Track byte-wise offset inside token. We do *not* need to account
+#         # for splitting on spaces here since that's accounted *outside* of
+#         # each `token`. This should be exactly correct as long as BERT's
+#         # tokenizer doesn't change the number of bytes in a token during
+#         # tokenization; we check for this condition in
+#         # `num_mismatched_tokens`.
+#         internal_byte_offset += subtoken_len
+#       berttok_wordpieces.append(inside_berttok_wordpieces)
+#       berttok_starts.append(inside_berttok_starts)
+#       berttok_limits.append(inside_berttok_limits)
+#     if mismatched_tokens:
+#       logging.info("Have %d mismatched tokens of %d (%d bytes off): %s",
+#                   len(mismatched_tokens), num_tokens, mismatch_bytes,
+#                   " ".join(mismatched_tokens))
+
+#     # Finally, we post-process the result to ensure
+#     # that we don't split special tokens, taking care to preserve the mapping
+#     # from `text` bytes to wordpiece indices.
+#     wordpieces_out = []
+#     start_offsets_out = []
+#     end_offsets_out = []
+#     offset_to_wp_out = {}
+
+#     curr_offset = 0
+#     token_count = 0
+#     # `token`:str are the whitespace-delimited tokens from `tokenize`.
+#     # `wps`:List[int] are the wordpiece ids from `BertTokenizer` within each
+#     #   `token`.
+#     # `wp_starts`:List[int] are the byte starts for each wordpiece.
+#     # `wp_limits`:List[int] are the byte limits for each wordpiece.
+#     for token, wps, wp_starts, wp_limits in zip(whitespace_tokens,
+#                                                 berttok_wordpieces,
+#                                                 berttok_starts, berttok_limits):
+#       # If it is a special token (e.g. [UNK]), don't tokenize into wordpieces.
+#       if self.is_special_token(token):
+#         vocab_id = self.get_vocab_id(token)
+#         # Iterate over the text byte offsets covered by this token and
+#         # associate each with this wordpice index.
+#         wp_index = len(wordpieces_out)
+#         for j in range(0, data.byte_len(token)):
+#           offset_to_wp_out[j + curr_offset] = wp_index
+#         if vocab_id > -1:
+#           wordpieces_out.append(vocab_id)
+#         else:
+#           vocab_id = self.get_vocab_id("[UNK]")
+#           wordpieces_out.append(vocab_id)
+#         start_offsets_out.append(curr_offset)
+#         end_offsets_out.append(curr_offset + data.byte_len(token) - 1)
+#       else:
+#         # Not a special token, so keep the wordpieces.
+#         # `i`: index of the current wordpiece *within* the whitespace `token`.
+#         # `wp_start`: byte-wise start of this token within whitespace `token`.
+#         # `wp_limit`: byte-wise end index of this token within whitespace
+#         #             `token`.
+#         for i, (wp_start, wp_limit) in enumerate(zip(wp_starts, wp_limits)):
+#           # `j`: byte offset *within* the current whitespace token.
+#           for j in range(0, data.byte_len(token)):
+#             if j >= wp_start and j < wp_limit:
+#               offset_to_wp_out[j + curr_offset] = len(wordpieces_out) + i
+#         wordpieces_out.extend(wps)
+#         start_offsets_out.extend([k + curr_offset for k in wp_starts])
+#         end_offsets_out.extend([k + curr_offset - 1 for k in wp_limits])
+#       curr_offset += data.byte_len(token)
+
+#       # Splitting space is one byte as defined in `tokenize` function.
+#       token_count += 1
+#       if token_count < len(whitespace_tokens):
+#         offset_to_wp_out[curr_offset] = -1
+#         curr_offset += 1
+#     assert len(start_offsets_out) == len(wordpieces_out)
+#     assert len(start_offsets_out) == len(end_offsets_out)
+#     # print('wordpiece------',wordpieces_out) 
+#     # print('start',start_offsets_out)
+#     # print('end------', end_offsets_out)
+#     # print('wps-------' ,offset_to_wp_out)
+#     return wordpieces_out, start_offsets_out, end_offsets_out, offset_to_wp_out
+
+
+#   def is_special_token(self, token):
+#     """Is this a special token reserved for BERT or TyDi QA modeling?"""
+
+#     # NOTE: These must also be in the system's vocabulary file, which by default
+#     # is `mbert_modified_vocab.txt`, which is the original mBERT vocabulary
+#     # with some special tokens specific to our system added in the reserved
+#     # (unused) vocabulary space.
+#     special_tokens = set([
+#         "[CLS]", "[SEP]", "[PAD]", "[Q]", "[YES]", "[NO]", "[NoLongAnswer]",
+#         "[NoShortAnswer]", "[SA]", "[/SA]", "[UNK]", "[CLS]", "[SEP]", "[MASK]"
+#     ])
+#     if token in special_tokens:
+#       return True
+#     if token.startswith("[Paragraph=") or token.startswith("[ContextId="):
+#       return True
+#     return False
+
+#   def get_vocab_id(self, special_token):
+#     """Gets the vocab id of a `special_token`."""
+#     if special_token in self.vocab:
+#       return self.vocab[special_token]
+#     else:
+#       raise "Unrecognized special token: '{}'".format(special_token)
+
+#   def _flatten_inner(self, seq):
+#     """Creates a 2D nested list from 3D, squeezing the inner dims."""
+#     result = []
+#     for subseq in seq:
+#       # `subseq` is seq[i], a 2D list.
+#       inner = []  # `inner` will remain a 1D list.
+#       for subsubseq in subseq:
+#         # `subsubseq` is seq[i][j], a 1D list.
+#         inner.extend(subsubseq)
+#       result.append(inner)
+#     return result
+
+
 class TyDiTokenizer(object):
-  """A BERT-compatible tokenizer that keeps byte indices."""
+#   """A BERT-compatible tokenizer that keeps byte indices."""
 
   def __init__(self, vocab_file, fail_on_mismatch=False):
-    self.vocab = bert_tokenization.load_vocab(vocab_file)
-    self.tokenizer = NonDestructiveFullTokenizer(vocab_file=vocab_file)
-    self.fail_on_mismatch = fail_on_mismatch
+      # self.vocab = bert_tokenization.load_vocab(vocab_file)
+      # self.tokenizer = NonDestructiveFullTokenizer(vocab_file=vocab_file)
+      vocab_file = '/Users/faisal/projects/mlingual_align/models/modified_sentencepiece'
+      if 'sentencepiece' in vocab_file:
+          from transformers import XLMRobertaTokenizerFast
+          # vocab_path = '/Users/faisal/projects/mlingual_align/models/modified_sentencepiece'
+          self.tokenizer = XLMRobertaTokenizerFast.from_pretrained('xlm-roberta-base')
+          self.tokenizer.add_tokens(special_tokens_xlm)
+          self.mtype = 'sp'
+
+      elif 'wordpiece' in vocab_file:
+          from transformers import BertTokenizerFast
+          # vocab_path = '/Users/faisal/projects/mlingual_align/models/modified_sentencepiece'
+          self.tokenizer = BertTokenizerFast.from_pretrained('bert-base-multilingual-cased')
+          self.tokenizer.add_tokens(special_tokens_bert)
+          self.mtype = 'wp'
+          
+      self.vocab = self.tokenizer.get_vocab()
+      self.fail_on_mismatch = fail_on_mismatch
+      print(self.mtype, vocab_file)
 
   def tokenize(self, text):
     wordpieces, _, _, _ = self.tokenize_with_offsets(text)
@@ -307,9 +557,12 @@ class TyDiTokenizer(object):
         offset_to_wp_out: Dict[int, int]
     """
 
-    # First, tokenize on whitespace so that we can preserve special tokens
-    # such as '[CLS]' and '[ContextId=0]' (`BertTokenizer` would split these
-    # otherwise).
+  #  First, tokenize on whitespace so that we can preserve special tokens
+  #   such as '[CLS]' and '[ContextId=0]' (`BertTokenizer` would split these
+  #   otherwise).
+    from tokenizers import Encoding
+    from transformers import BatchEncoding
+    
     whitespace_tokens = text.split(" ")
 
     berttok_wordpieces = []  # type List[List[int]]
@@ -319,34 +572,75 @@ class TyDiTokenizer(object):
     mismatched_tokens = []
     mismatch_bytes = 0
     num_tokens = len(whitespace_tokens)
-
-    unk_token = "[UNK]"
-    unk_id = self.vocab[unk_token]
+    
+    if self.mtype=='wp':
+        unk_token = "[UNK]"
+        unk_id = self.vocab[unk_token]
+    elif self.mtype=='sp':
+        unk_token = "<unk>"
+        unk_id = self.vocab[unk_token]
 
     for token in whitespace_tokens:
-      internal_byte_offset = 0
-      subtokens = self.tokenizer.tokenize(token)
-      subtoken_ids = [
-          self.vocab.get(subtoken, unk_id) for subtoken, _, _ in subtokens
-      ]
-      subtoken_lengths = [
-          data.byte_len(orig_subtoken) for _, orig_subtoken, _ in subtokens
-      ]
 
+      tokenized_batch : BatchEncoding = self.tokenizer(token, add_special_tokens=False)
+      tokenized_text : Encoding  = tokenized_batch[0]
+      internal_byte_offset = 0
+
+      subtoken_lengths = []
+      subtokens = []
+      subtoken_ids = []
+      wo_sp = tokenized_text.tokens.copy()
+      wo_sp = [x for x in wo_sp if x!='▁']
+      e_o=0
+      e_o_i=0
+      count=0
+      t_s_p=0
+      for i,j in enumerate(tokenized_text.tokens):
+        if j!='▁':
+            t_s = tokenized_text.token_to_chars(i)[0]
+            t_e = tokenized_text.token_to_chars(i)[1]
+            if t_s==t_s_p and count>0:
+              diff = t_e-t_s
+              t_s=e_o
+              t_e=t_s+diff
+            tok_len = data.byte_len(token[t_s:t_e])
+            if e_o!=t_s:
+              e_o_i=e_o
+              for l in range(0,t_s-e_o):
+                subtokens.append(unk_token)
+                subtoken_ids.append(unk_id)
+                subtoken_lengths.append(data.byte_len(token[e_o_i:1+e_o_i]))
+                e_o_i+=1
+            subtokens.append(j)
+            subtoken_ids.append(self.tokenizer.convert_tokens_to_ids(j))
+            subtoken_lengths.append(tok_len)
+            if (count==len(wo_sp)-1) and (len(token)>t_e):
+              e_o_i=t_e
+              for l in range(0,len(token)-t_e):
+                subtokens.append(unk_token)
+                subtoken_ids.append(unk_id)
+                subtoken_lengths.append(data.byte_len(token[e_o_i:e_o_i+1]))
+                e_o_i+=1
+            e_o=t_e
+            t_s_p=t_s
+            count+=1
+      if len(wo_sp)==0 and len(token)!=0:
+        e_o_i=0
+        for l,j in enumerate(token):
+          subtokens.append(unk_token)
+          subtoken_ids.append(unk_id)
+          subtoken_lengths.append(data.byte_len(token[e_o_i:e_o_i+1]))
+          e_o_i+=1
       actual_token_length = data.byte_len(token)
       actual_subtokens_length = sum(subtoken_lengths)
+
 
       if actual_token_length != actual_subtokens_length:
         mismatched_tokens.append(token)
         mismatch_bytes += abs(actual_token_length - actual_subtokens_length)
-
-        if self.fail_on_mismatch:
-          raise ValueError(
-              "Mismatched token. token='{}' (len={}) subtokens='{}' (len={})"
-              .format(
-                  token, actual_token_length,
-                  " ".join(orig_subtoken for _, orig_subtoken, _ in subtokens),
-                  actual_subtokens_length))
+        # self.fail_on_mismatch=True
+        # if self.fail_on_mismatch:
+        #   raise ValueError(token,subtokens,actual_token_length,actual_subtokens_length)
 
       inside_berttok_wordpieces = []
       inside_berttok_starts = []
@@ -426,7 +720,12 @@ class TyDiTokenizer(object):
         curr_offset += 1
     assert len(start_offsets_out) == len(wordpieces_out)
     assert len(start_offsets_out) == len(end_offsets_out)
+    # print('wordpiece------',wordpieces_out) 
+    # print('start',start_offsets_out)
+    # print('end------', end_offsets_out)
+    # print('wps-------' ,offset_to_wp_out)
     return wordpieces_out, start_offsets_out, end_offsets_out, offset_to_wp_out
+
 
   def is_special_token(self, token):
     """Is this a special token reserved for BERT or TyDi QA modeling?"""
@@ -436,7 +735,7 @@ class TyDiTokenizer(object):
     # with some special tokens specific to our system added in the reserved
     # (unused) vocabulary space.
     special_tokens = set([
-        "[CLS]", "[SEP]", "[PAD]", "[Q]", "[YES]", "[NO]", "[NoLongAnswer]",
+        "<s>","</s>","<mask>","<pad>","[CLS]", "[SEP]", "[PAD]", "[Q]", "[YES]", "[NO]", "[NoLongAnswer]",
         "[NoShortAnswer]", "[SA]", "[/SA]", "[UNK]", "[CLS]", "[SEP]", "[MASK]"
     ])
     if token in special_tokens:
@@ -463,3 +762,4 @@ class TyDiTokenizer(object):
         inner.extend(subsubseq)
       result.append(inner)
     return result
+
