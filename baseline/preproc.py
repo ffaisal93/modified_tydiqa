@@ -533,12 +533,18 @@ def convert_single_example(tydi_example,
 
   for (doc_span_index, doc_span) in enumerate(doc_spans):
     wps = []
-    wps.append(tokenizer.get_vocab_id("[CLS]"))
+    if tokenizer.mtype=='wp':
+        wps.append(tokenizer.get_vocab_id("[CLS]"))
+    elif tokenizer.mtype=='sp':
+        wps.append(tokenizer.get_vocab_id("<s>"))
     segment_ids = []
     segment_ids.append(0)
     wps.extend(question_wordpieces)
     segment_ids.extend([0] * len(question_wordpieces))
-    wps.append(tokenizer.get_vocab_id("[SEP]"))
+    if tokenizer.mtype=='wp':
+        wps.append(tokenizer.get_vocab_id("[SEP]"))
+    elif tokenizer.mtype=='sp':
+        wps.append(tokenizer.get_vocab_id("</s>"))
     segment_ids.append(0)
 
     wp_start_offset = [-1] * len(wps)
@@ -550,7 +556,10 @@ def convert_single_example(tydi_example,
       wp_end_offset.append(wp_end_offsets[split_token_index])
       wps.append(all_doc_wp[split_token_index])
       segment_ids.append(1)
-    wps.append(tokenizer.get_vocab_id("[SEP]"))
+    if tokenizer.mtype=='wp':
+        wps.append(tokenizer.get_vocab_id("[SEP]"))
+    elif tokenizer.mtype=='sp':
+        wps.append(tokenizer.get_vocab_id("</s>"))
     wp_start_offset.append(-1)
     wp_end_offset.append(-1)
     segment_ids.append(1)
